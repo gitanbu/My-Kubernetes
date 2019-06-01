@@ -1,0 +1,194 @@
+     Kubernetes installation Steps on Cent OS 7
+
+
+
+
+
+#yum update all
+
+
+
+#yum install kubectl kubeadm kubectl docker-ce
+
+
+
+#yum install -y yum-utils device-mapper-persistent-data lvm2
+
+
+
+Make entry below details all three machines on 
+
+/etc/hosts 
+
+
+
+
+192.168.127.101 kubernetes.anbu.com
+
+192.168.127.102 kube1.anbu.com
+
+192.168.127.103 kube2.anbu.com
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+Disable both SELinux and Swap on three machines
+
+
+
+setenforce 0
+
+
+sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g'
+
+
+
+swapoff -a
+
+
+
+Make comment on /etc/fstab entry below for line
+
+
+[root@kubernetes ~]/dev/mapper/centos-swap swap swap defaults 0 0
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Now we need to ensure that both Docker-ce and Kubernetes belong to the same control group (cgroup). 
+
+By default, Docker should already belong to cgroupfs (we can check this with the command)
+
+
+
+#docker info | grep -i cgroupEnable br_netfilter
+
+
+
+
+To add Kubernetes to this, issue the command:
+
+
+
+[root@kubernetes ~]sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Restart the systemd daemon and the kubelet service
+
+
+
+[root@kubernetes ~]systemctl daemon-reload
+
+[root@kubernetes ~]systemctl restart kubelet
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+
+Instialize  Kubernetes cluster on kubernetes.anbu.com
+
+ 
+
+#kubeadm init --apiserver-advertise-address=192.168.127.101 ----pod-network-cidr=192.168.127.0/16
+
+
+
+[root@kubernetes ~]mkdir -p $HOME/.kube
+
+[root@kubernetes ~]sudo cp  /etc/kubernetes/admin.conf $HOME/.kube/config
+
+[root@kubernetes ~]sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+---------------------------------------------------------------------------------------------------------------------------
+
+
+
+Deploying flannel network
+
+===================
+
+
+
+[root@kubernetes ~]kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+
+
+
+Execute below command on kube1 & kube 2 workers nodes to join with manganer
+
+
+
+kubeadm join 192.168.127.101:6443 --token 8sdwa8.gtdrnlxm89775dcw --discovery-token-ca-cert-hash 
+
+sha256:3e70d197e8a0a69e3afc16eb060dce85a0129b922356d25b39e7d9b7ae65e6e9
+
+
+
+
+-------------------------------------------------------------------------------------------
+  
+ To Bring Scheduling from Disabled
+
+
+
+[root@kubernetes ~]# kubectl get nodes
+
+NAME                  STATUS                     ROLES    AGE     VERSION
+
+kube1.anbu.com        Ready,SchedulingDisabled   <none>   20h     v1.13.1
+kube2.anbu.com        Ready,SchedulingDisabled   <none>   20h     v1.13.1
+kubernetes.anbu.com   Ready                      master   4d12h   v1.13.1
+
+
+
+[root@kubernetes ~]# kubectl patch node kube1.anbu.com -p "{\"spec\":{\"unschedulable\":false}}"
+node/kube1.anbu.com patched
+
+
+[root@kubernetes ~]# kubectl patch node kube2.anbu.com -p "{\"spec\":{\"unschedulable\":false}}"
+node/kube2.anbu.com patched
+
+
+[root@kubernetes ~]# kubectl get nodes
+NAME                  STATUS   ROLES    AGE     VERSION
+kube1.anbu.com        Ready    <none>   20h     v1.13.1
+kube2.anbu.com        Ready    <none>   20h     v1.13.1
+kubernetes.anbu.com   Ready    master   4d12h   v1.13.1
+--------------------------------------------------------------------------------------------------------------------
+  
+                      Labeling
+
+
+[root@kubernetes ~]# kubectl label node kube1.anbu.com node-role.kubernetes.io/worker=worker
+
+[root@kubernetes ~]# kubectl label node kube2.anbu.com node-role.kubernetes.io/worker=worker
+
+
+[root@kubernetes ~]# kubectl get node
+
+NAME                  STATUS   ROLES    AGE     VERSION
+kube1.anbu.com        Ready    worker   21h     v1.13.1
+kube2.anbu.com        Ready    worker   21h     v1.13.1
+kubernetes.anbu.com   Ready    master   4d13h   v1.13.1
+
+
+To Lauch Kubernetes Dashboard
+
+
+[root@kubernetes ~]kubectl proxy --address='0.0.0.0' --port=8001 --accept-hosts='^*$'
+
+Open it on browser  below link to access Kubernetes Dashboard.
+
+kubernetes.anbu.com:8001/api/v1/namespaces/kube-system/services/kubernetes-dashboard
+
+
+
+
