@@ -41,7 +41,7 @@ Disable both SELinux and Swap on three machines
 setenforce 0
 
 
-sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g'
+sed -i 's/enforcing/disabled/g' /etc/selinux/config /etc/selinux/config
 
 
 
