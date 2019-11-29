@@ -56,6 +56,18 @@ Make comment on /etc/fstab entry below for line
 
 ----------------------------------------------------------------------------------------------------------------------------------------
 
+#cat  < /etc/sysctl.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+#sysctl --system
+---------------------------
+Disable swap
+
+#sed -i '/swap/d' /etc/fstab
+#swapoff -a
+--------------------------
 
 
 Now we need to ensure that both Docker-ce and Kubernetes belong to the same control group (cgroup). 
