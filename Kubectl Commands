@@ -1,0 +1,4 @@
+Copy a file kubernetes pods
+
+#kubectl exec -it init-demo -- /bin/bash
+#kubectl cp index.html init-demo:/usr/share/nginx/html/
