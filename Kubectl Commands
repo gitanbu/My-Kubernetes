@@ -1,4 +1,22 @@
-Copy a file kubernetes pods
+        Copy a local file to a remote Pod in a cluster.
+        **********************************************
 
-#kubectl exec -it init-demo -- /bin/bash
+#kubectl exec -it init-demo -- /bin/bash        - To login to container.
 #kubectl cp index.html init-demo:/usr/share/nginx/html/
+
+        Copy a remote file from a Pod to a local file.
+        *********************************************
+
+#kubectl cp init-demo:/usr/share/nginx/html/ /tmp
+
+
+        List a container name from pods 
+        *******************************
+        
+#kubectl get pods POD_NAME_HERE -o jsonpath='{.spec.containers[*].name}'
+
+#kubectl get pods init-demo  -o=custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name
+
+NAME        CONTAINERS
+init-demo   nginx
+        
