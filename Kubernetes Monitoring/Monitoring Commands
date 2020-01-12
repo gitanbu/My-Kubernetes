@@ -1,0 +1,26 @@
+kubectl get nodes -o yaml | egrep '\sname:|cpu:|memory:'
+    name: kubemas1.anbu.com
+      cpu: "2"
+      memory: 3777904Ki
+      cpu: "2"
+      memory: 3880304Ki
+    name: kubemas2.anbu.com
+      cpu: "2"
+      memory: 1779584Ki
+      cpu: "2"
+      memory: 1881984Ki
+    name: kubemas3.anbu.com
+      cpu: "2"
+      memory: 1779584Ki
+      cpu: "2"
+      memory: 1881984Ki
+    name: worker1.anbu.com
+      cpu: "2"
+      memory: 1944448Ki
+      cpu: "2"
+      memory: 2046848Ki
+    name: worker2.anbu.com
+      cpu: "2"
+      memory: 1779584Ki
+      cpu: "2"
+      memory: 1881984Ki
