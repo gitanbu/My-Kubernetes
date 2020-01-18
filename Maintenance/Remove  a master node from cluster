@@ -1,7 +1,7 @@
                  Procedure for remove a master node from kubernetes cluster.
                  **********************************************************
 
- I am going to remove 192.168.56.142(kubemas3.anbu.com) node from etcd cluster.
+ I am going to remove 192.168.56.142(kubemas3.anbu.com) master node from kubernetes cluster.
  
     List the etcd members
     ---------------------
@@ -15,6 +15,16 @@ afd5b034595cfe09, started, 192.168.56.143, https://192.168.56.143:2380, https://
    Stop & disable etcd service 
    
 #systemctl stop etcd && systemctl disable etcd 
+
+   Stop & disable kubelet service 
+ 
+#systemctl stop kubelet && systemctl disable kubelet
+
+   Drain the Node from cluster
+   ---------------------------
+ 
+[root@kubemas1 kubelet]# kubectl drain kubemas3.anbu.com
+node/kubemas3.anbu.com already cordoned
 
    Remove a member from cluster
    ----------------------------
@@ -52,14 +62,59 @@ The reset process does not clean your kubeconfig files and you must remove them 
 Please, check the contents of the $HOME/.kube/config file.
 
 
- Drain the Node from cluster
- ---------------------------
  
-[root@kubemas1 kubelet]# kubectl drain kubemas3.anbu.com
-node/kubemas3.anbu.com already cordoned
+
+#kubectl -n kube-system edit cm kubeadm-config -oyaml
+
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  ClusterConfiguration: |
+    apiServer:
+      extraArgs:
+        authorization-mode: Node,RBAC
+      timeoutForControlPlane: 4m0s
+    apiVersion: kubeadm.k8s.io/v1beta2
+    certificatesDir: /etc/kubernetes/pki
+    clusterName: kubernetes
+    controlPlaneEndpoint: 192.168.56.145:6443
+    controllerManager: {}
+    dns:
+      type: CoreDNS
+    etcd:
+      external:
+        caFile: /etc/etcd/ca.pem
+        certFile: /etc/etcd/kubernetes.pem
+        endpoints:
+        - https://192.168.56.143:2379
+        - https://192.168.56.144:2379
+        - https://192.168.56.142:2379                        -  We should remove this line and exit
+        keyFile: /etc/etcd/kubernetes-key.pem
+    imageRepository: k8s.gcr.io
+    kind: ClusterConfiguration
+    kubernetesVersion: v1.17.0
+    networking:
+      dnsDomain: cluster.local
+      podSubnet: 10.30.0.0/24
+      serviceSubnet: 10.96.0.0/12
+    scheduler: {}
+  ClusterStatus: |
+    apiEndpoints:
+      kubemas1.anbu.com:
+        advertiseAddress: 10.0.2.15
+        bindPort: 6443
+      kubemas2.anbu.com:
+        advertiseAddress: 10.0.2.15
+        bindPort: 6443
+
 
  Delete the Node from cluster
  ----------------------------
 
 [root@kubemas1 kubelet]# kubectl delete node kubemas3.anbu.com
 node "kubemas3.anbu.com" deleted
+
+
