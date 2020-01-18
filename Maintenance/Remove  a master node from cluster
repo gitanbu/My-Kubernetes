@@ -3,6 +3,35 @@
 
  I am going to remove 192.168.56.142(kubemas3.anbu.com) master node from kubernetes cluster.
  
+ 
+ Remove the ip from HA Proxy
+ --------------------------
+ 
+ vi /etc/haproxy/haproxy.cfg
+ 
+ #---------------------------------------------------------------------
+#backend static
+#    balance     roundrobin
+#    server      static 192.168.56.145:6443 check
+
+#---------------------------------------------------------------------
+# round robin balancing between the various backends
+#---------------------------------------------------------------------
+frontend kubernetes
+    bind 192.168.56.145:6443
+    option tcplog
+    mode tcp
+    default_backend app
+backend app
+    balance     roundrobin
+    server  app1 192.168.56.143:6443 check
+    server  app2 192.168.56.145:6443 check
+    server  app3 192.168.56.142.6443 check    - We have to remove this line and save it
+    
+    #systemctl daemon-reload
+    #systemctl restart haproxy && systemctl enable haproxy
+    
+ 
     List the etcd members
     ---------------------
  
