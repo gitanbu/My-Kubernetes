@@ -12,6 +12,10 @@
 a4ee350447b1c083, started, 192.168.56.144, https://192.168.56.144:2380, https://192.168.56.144:2379, false
 afd5b034595cfe09, started, 192.168.56.143, https://192.168.56.143:2380, https://192.168.56.143:2379, false
 
+   Stop & disable etcd service 
+   
+#systemctl stop etcd && systemctl disable etcd 
+
    Remove a member from cluster
    ----------------------------
 
