@@ -7,6 +7,7 @@
     ---------------------
  
 [root@kubemas1 kubelet]# etcdctl member list
+
 9f04057cd10cb0b7, started, 192.168.56.142, https://192.168.56.142:2380, https://192.168.56.142:2379, false
 a4ee350447b1c083, started, 192.168.56.144, https://192.168.56.144:2380, https://192.168.56.144:2379, false
 afd5b034595cfe09, started, 192.168.56.143, https://192.168.56.143:2380, https://192.168.56.143:2379, false
@@ -22,6 +23,7 @@ Member 9f04057cd10cb0b7 removed from cluster be7714fdd77450dc
  ------------------------------------------------------------
  
  [root@kubemas3 etcd]# kubeadm reset
+ 
 [reset] WARNING: Changes made to this host by 'kubeadm init' or 'kubeadm join' will be reverted.
 [reset] Are you sure you want to proceed? [y/N]: y
 [preflight] Running pre-flight checks
