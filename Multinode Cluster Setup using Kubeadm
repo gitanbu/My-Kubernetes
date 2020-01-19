@@ -417,7 +417,44 @@ etcd:
     # kubeadm init --config=kubeadm-config.yml
     
     
-    
+[root@kubemas1 pki]# scp -r /etc/kubernetes/pki root@192.168.56.142:/etc/kubernetes
+root@192.168.56.142's password:
+Permission denied, please try again.
+root@192.168.56.142's password:
+Permission denied, please try again.
+root@192.168.56.142's password:
+ca.key                                                                                                                           100% 1679     2.0MB/s   00:00
+ca.crt                                                                                                                           100% 1025   958.9KB/s   00:00
+apiserver.key                                                                                                                    100% 1675     1.6MB/s   00:00
+apiserver.crt                                                                                                                    100% 1245     1.3MB/s   00:00
+apiserver-kubelet-client.key                                                                                                     100% 1679     1.5MB/s   00:00
+apiserver-kubelet-client.crt                                                                                                     100% 1099     1.4MB/s   00:00
+front-proxy-ca.key                                                                                                               100% 1675     2.1MB/s   00:00
+front-proxy-ca.crt                                                                                                               100% 1038     1.0MB/s   00:00
+front-proxy-client.key                                                                                                           100% 1679     1.9MB/s   00:00
+front-proxy-client.crt                                                                                                           100% 1058   999.7KB/s   00:00
+sa.key                                                                                                                           100% 1675     1.8MB/s   00:00
+sa.pub                                                                                                                           100%  451   471.0KB/s   00:00
+
+[root@kubemas1 pki]# scp -r /etc/kubernetes/pki root@192.168.56.144:/etc/kubernetes
+root@192.168.56.144's password:
+ca.key                                                                                                                           100% 1679     1.3MB/s   00:00
+ca.crt                                                                                                                           100% 1025   878.8KB/s   00:00
+apiserver.key                                                                                                                    100% 1675     1.6MB/s   00:00
+apiserver.crt                                                                                                                    100% 1245     1.1MB/s   00:00
+apiserver-kubelet-client.key                                                                                                     100% 1679     1.9MB/s   00:00
+apiserver-kubelet-client.crt                                                                                                     100% 1099     1.1MB/s   00:00
+front-proxy-ca.key                                                                                                               100% 1675     1.7MB/s   00:00
+front-proxy-ca.crt                                                                                                               100% 1038     1.0MB/s   00:00
+front-proxy-client.key                                                                                                           100% 1679     1.5MB/s   00:00
+front-proxy-client.crt                                                                                                           100% 1058     1.0MB/s   00:00
+sa.key                                                                                                                           100% 1675     1.5MB/s   00:00
+sa.pub                                    
+
+
+you can login to 192.168.56.144 & 192.168.56.142 and remove the apiserver.key and apiserver.crt  file from  /etc/kubernetes/pki/
+
+   #kubeadm init --config kubeadm-config.yaml
     
 Your Kubernetes control-plane has initialized successfully!
 
@@ -453,9 +490,15 @@ kubemas2.anbu.com   Ready    master   23d   v1.17.0
 kubemas3.anbu.com   Ready    master   23d   v1.17.0
 
 
-  Apply the CNI plugin of your choice. The given example is for Weave Net , execute below command on all kubemas servers.
+  Apply the CNI plugin of your choice. The given example is for Weave Net , execute below command on all kubemas servers. use either one.
 
+  Weave net
+  
  #kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+ 
+  Calico Network
+  
+ #kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
 
 
 
