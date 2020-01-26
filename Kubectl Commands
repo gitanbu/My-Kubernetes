@@ -4,8 +4,8 @@
 #kubectl exec -it init-demo -- /bin/bash        - To login to container.
 #kubectl cp index.html init-demo:/usr/share/nginx/html/
 
-        Copy a remote file from a Pod to a local file.
-        *********************************************
+        Copy a remote file from a Pod to a local .
+        ******************************************
 
 #kubectl cp init-demo:/usr/share/nginx/html/ /tmp
 
