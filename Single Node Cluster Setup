@@ -201,6 +201,10 @@ Open it on browser  below link to access Kubernetes Dashboard.
 
 kubernetes.anbu.com:8001/api/v1/namespaces/kube-system/services/kubernetes-dashboard
 
+To schedule pods on master node
+
+kubectl taint nodes --all node-role.kubernetes.io/master-
+
 
 
 
