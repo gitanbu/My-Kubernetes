@@ -1,0 +1,30 @@
+
+# kubectl create deployment nginx --image=nginx
+deployment.apps/nginx created
+
+# kubectl get deployments
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+nginx   0/1     1            0           44s
+
+# kubectl create service nodeport nginx --tcp=80:80
+service/nginx created
+
+# kubectl get svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP        88d
+nginx        NodePort    10.98.232.113   <none>        80:30710/TCP   15m
+
+# curl 10.98.232.113:80
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+
+
+# kubectl patch service nginx -p '{"spec": {"type": "LoadBalancer", "externalIPs":["192.168.56.26"]}}'
+service/nginx patched
+
+# k get svc
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
+kubernetes   ClusterIP      10.96.0.1       <none>          443/TCP          88d
+nginx        LoadBalancer   10.98.232.113   192.168.56.26   80:30710/TCP     76m
