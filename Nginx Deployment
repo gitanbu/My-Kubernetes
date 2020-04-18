@@ -28,3 +28,41 @@ service/nginx patched
 NAME         TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
 kubernetes   ClusterIP      10.96.0.1       <none>          443/TCP          88d
 nginx        LoadBalancer   10.98.232.113   192.168.56.26   80:30710/TCP     76m
+
+
+Let’s update the nginx Pods to use the nginx:1.16.1 image instead of the nginx:1.14.2 image.
+
+
+#kubectl set image deployment/nginx-deployment nginx=nginx:1.16.1 --record
+
+Rolling Back to a Previous Revision
+
+Undo the current rollout and rollback to the previous revision:
+
+#kubectl rollout undo deployment.v1.apps/nginx-deployment
+
+Alternatively, we can rollback to a specific revision by specifying it with --to-revision:
+
+#kubectl rollout undo deployment.v1.apps/nginx-deployment --to-revision=2
+
+
+]# kubectl describe deployment nginx-deployment
+Name:                   nginx-deployment
+Namespace:              default
+CreationTimestamp:      Sat, 18 Apr 2020 20:51:39 +0530
+Labels:                 app=nginx
+Annotations:            deployment.kubernetes.io/revision: 4
+                        kubectl.kubernetes.io/last-applied-configuration:
+                          {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"nginx"},"name":"nginx-deployment","namespace":"d...
+                        kubernetes.io/change-cause: kubectl set image deployment/nginx-deployment nginx=nginx:1.16.1 --record=true
+Selector:               app=nginx
+Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=nginx
+  Containers:
+   nginx:
+    Image:        nginx:1.16.1
+
