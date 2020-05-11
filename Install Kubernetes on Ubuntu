@@ -58,4 +58,7 @@ systemctl daemon-reload
 systemctl restart docker
 
         
-        
+       kubeadm init --apiserver-advertise-address=192.168.56.160 --pod-network-cidr=192.168.0.0/16
+       
+       
+kubectl label node worker2.anbu.com node-role.kubernetes.io/worker=worker
