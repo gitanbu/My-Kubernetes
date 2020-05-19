@@ -1,0 +1,31 @@
+Step by step how to pull a private DockerHub hosted image in a Kubernetes YML.
+
+export DOCKER_REGISTRY_SERVER=https://index.docker.io/v1/
+export DOCKER_USER=Type your dockerhub username, same as when you `docker login`
+export DOCKER_EMAIL=Type your dockerhub email, same as when you `docker login`
+export DOCKER_PASSWORD=Type your dockerhub pw, same as when you `docker login`
+
+kubectl create secret docker-registry myregistrykey \
+  --docker-server=$DOCKER_REGISTRY_SERVER \
+  --docker-username=$DOCKER_USER \
+  --docker-password=$DOCKER_PASSWORD \
+  --docker-email=$DOCKER_EMAIL
+
+If your username on DockerHub is DOCKER_USER, and your private repo is called PRIVATE_REPO_NAME, and the image you want to pull is tagged "latest", create this dummy.yaml file:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: foo
+spec:
+  containers:
+    - name: whatever
+      image: index.docker.io/DOCKER_USER/PRIVATE_REPO_NAME:latest
+      imagePullPolicy: Always
+      command: [ "echo", "SUCCESS" ]
+  imagePullSecrets:
+    - name: myregistrykey
+
+
+Then run:
+kubectl create -f dummy.yaml
