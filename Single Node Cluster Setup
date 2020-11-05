@@ -20,7 +20,7 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cl
 EOF
 
 
-#yum install kubectl kubeadm kubectl docker-ce
+#yum install kubelet kubeadm kubectl docker-ce
 
 
 
