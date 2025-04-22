@@ -1,0 +1,3 @@
+ crictl images --output json | jq -r '.images[] | .repoTags[]?' | sort -u: This part lists all the images on the node.
+
+crictl ps --output json | jq -r '.containers[] | .imageRef' | sort -u: This part lists all the images currently in use by running containers
