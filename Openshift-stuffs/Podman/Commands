@@ -6,3 +6,7 @@ crictl images --output json | jq -r '.images[] | .repoTags[]?' | sort -u
 This part lists all the images currently in use by running containers
 
 crictl ps --output json | jq -r '.containers[] | .imageRef' | sort -u
+
+Delete all imagepullbackoff pods from all namespace
+
+oc get pods --all-namespaces | grep ImagePullBackOff | awk '{print "oc delete pod", $2, "-n", $1}' | sh
